@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Post 2 — Representación de Grafos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1 class="site-title">Blog Técnico: Grafos</h1>
+      <nav class="main-nav">
+        <a href="index.html">Inicio</a>
+        <a href="post1-introduccion.html">Introducción</a>
+        <a href="post2-representacion.html">Representación</a>
+        <a href="post3-recorridos.html">BFS / DFS</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>Post 2 — Representación de Grafos</h2>
+
+    <p>Para poder usar un grafo en un programa debemos guardarlo en memoria. Las dos representaciones clásicas son:</p>
+
+    <ol>
+      <li><strong>Lista de Adyacencia</strong></li>
+      <li><strong>Matriz de Adyacencia</strong></li>
+    </ol>
+
+    <section>
+      <h3>1) Lista de Adyacencia</h3>
+      <p>
+        En una lista de adyacencia cada nodo tiene asociada una lista (o vector) con sus vecinos.
+        Es muy eficiente en memoria para grafos dispersos (pocas aristas).
+      </p>
+
+      <h4>Ejemplo (mismo grafo del Post 1)</h4>
+      <pre>
+A → B, D
+B → A, C
+C → B, E
+D → A
+E → C
+      </pre>
+
+      <p><em>Ventajas:</em> ocupa O(V + E) memoria, fácil de iterar vecinos.</p>
+      <p><em>Desventajas:</em> comprobar si existe una arista entre dos nodos puede costar O(deg(v)).</p>
+    </section>
+
+    <section>
+      <h3>2) Matriz de Adyacencia</h3>
+      <p>
+        La matriz de adyacencia es una tabla N×N (N = número de nodos). Cada celda (i, j) indica
+        si existe arista entre i y j (1) o no (0). Para grafos ponderados se guarda el peso en la celda.
+      </p>
+
+      <h4>Ejemplo (orden de nodos: A B C D E)</h4>
+
+      <table border="1" cellpadding="8">
+        <tr>
+          <th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+        </tr>
+        <tr>
+          <th>A</th><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td>
+        </tr>
+        <tr>
+          <th>B</th><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td>
+        </tr>
+        <tr>
+          <th>C</th><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td>
+        </tr>
+        <tr>
+          <th>D</th><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td>
+        </tr>
+        <tr>
+          <th>E</th><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td>
+        </tr>
+      </table>
+
+      <p><em>Ventajas:</em> comprobar existencia de arista O(1). <em>Desventajas:</em> memoria O(N²), ineficiente si el grafo es grande y disperso.</p>
+    </section>
+
+    <section>
+      <h3>Comparación rápida</h3>
+      <ul>
+        <li><strong>Lista de adyacencia:</strong> buena para grafos dispersos, consume menos memoria, recorrido de vecinos rápido.</li>
+        <li><strong>Matriz de adyacencia:</strong> buena para grafos densos o cuando necesitemos consultas rápidas "¿hay arista entre u y v?"</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Ejemplo visual</h3>
+      <p>Usamos el mismo diagrama que en Post 1 para relacionar lo visual con ambas representaciones:</p>
+
+      <!-- Reusa la imagen SVG que ya subiste -->
+      <img src="img/grafo5nodos.svg" alt="Grafo de 5 nodos" style="width:350px; display:block; margin:10px auto;">
+
+      <p>En la lista de adyacencia verás las conexiones por nodo; en la matriz ves la conectividad entre pares.</p>
+    </section>
+
+    <section>
+      <h3>Implementación básica (ejemplo en pseudocódigo)</h3>
+      <p><strong>Lista de adyacencia (pseudocódigo):</strong></p>
+      <pre>
+# crear listas vacías para cada vértice
+adj = [ [] for v in 0..N-1 ]
+
+# agregar arista no dirigida u-v
+adj[u].append(v)
+adj[v].append(u)
+      </pre>
+
+      <p><strong>Matriz de adyacencia (pseudocódigo):</strong></p>
+      <pre>
+# crear matriz NxN inicializada en 0
+mat = [[0 for j in 0..N-1] for i in 0..N-1]
+
+# agregar arista no dirigida u-v
+mat[u][v] = 1
+mat[v][u] = 1
+      </pre>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Creado para la actividad de TADS — Ingeniería de Sistemas</p>
+      <p class="muted">Post 2: Representación de Grafos</p>
+    </div>
+  </footer>
+</body>
+</html>
