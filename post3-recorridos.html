@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Post 3 — Recorridos: BFS y DFS</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1 class="site-title">Blog Técnico: Grafos</h1>
+      <nav class="main-nav">
+        <a href="index.html">Inicio</a>
+        <a href="post1-introduccion.html">Introducción</a>
+        <a href="post2-representacion.html">Representación</a>
+        <a href="post3-recorridos.html">BFS / DFS</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>Post 3 — Algoritmos de Recorrido: BFS y DFS</h2>
+
+    <p>En este post veremos dos recorridos fundamentales en grafos: <strong>BFS</strong> (Breadth-First Search) y <strong>DFS</strong> (Depth-First Search). Ambos sirven para explorar todos los vértices alcanzables desde un origen.</p>
+
+    <section>
+      <h3>Grafo de ejemplo (misma estructura que en posts anteriores)</h3>
+      <p>Lista de adyacencia (recordatorio):</p>
+      <pre>
+A → B, D
+B → A, C
+C → B, E
+D → A
+E → C
+      </pre>
+
+      <p>Usaremos este grafo y comenzaremos siempre desde el nodo <strong>A</strong>.</p>
+    </section>
+
+    <section>
+      <h3>BFS — Breadth-First Search</h3>
+      <p><strong>Idea:</strong> explora por capas: primero todos los vecinos de distancia 1, luego distancia 2, y así sucesivamente. Se implementa con una <em>cola (queue)</em>.</p>
+
+      <h4>Pseudocódigo (BFS)</h4>
+      <pre>
+BFS(grafo, origen):
+  crear cola Q
+  marcar origen como visitado
+  encolar Q <- origen
+
+  while Q no vacío:
+    v = desencolar Q
+    procesar(v)
+    for cada vecino u de v:
+      if u no visitado:
+        marcar u como visitado
+        encolar Q <- u
+      end if
+    end for
+  end while
+      </pre>
+
+      <h4>Recorrido paso a paso (animación textual)</h4>
+      <p>Estado mostrado como: <strong>Cola [elementos]</strong> — <em>Nodo visitado</em> — <strong>Orden visitados</strong></p>
+
+      <pre>
+Inicio:
+Cola [A] — visitado: A — orden: A
+
+Desencolar A -> encolar vecinos B, D (en ese orden)
+Cola [B, D] — visitado: B — orden: A, B
+
+Desencolar B -> encolar C (A ya visitado)
+Cola [D, C] — visitado: D — orden: A, B, D
+
+Desencolar D -> no nuevos
+Cola [C] — visitado: C — orden: A, B, D, C
+
+Desencolar C -> encolar E
+Cola [E] — visitado: E — orden: A, B, D, C, E
+
+Desencolar E -> no nuevos
+Cola [] — FIN
+
+Orden final BFS: A, B, D, C, E
+      </pre>
+
+      <p><strong>Complejidad:</strong> O(V + E) en tiempo, O(V) adicional en memoria para la cola/visitados.</p>
+    </section>
+
+    <section>
+      <h3>DFS — Depth-First Search</h3>
+      <p><strong>Idea:</strong> explora lo más profundo posible antes de retroceder (backtracking). Se suele implementar recursivamente o con una pila (stack).</p>
+
+      <h4>Pseudocódigo (recursivo)</h4>
+      <pre>
+DFS(v):
+  marcar v como visitado
+  procesar(v)
+  for cada vecino u de v:
+    if u no visitado:
+      DFS(u)
+    end if
+  end for
+      </pre>
+
+      <h4>Pseudocódigo (iterativo con pila)</h4>
+      <pre>
+DFS_iterativo(grafo, origen):
+  crear pila S
+  push S <- origen
+  while S no vacío:
+    v = pop S
+    if v no visitado:
+      marcar v
+      procesar(v)
+      push en S los vecinos de v (en el orden deseado)
+    end if
+  end while
+      </pre>
+
+      <h4>Recorrido paso a paso (elección de vecinos en orden listado)</h4>
+      <p>Mostramos: <strong>Pila [tope...]</strong> — <em>Nodo procesado</em> — <strong>Orden visitados</strong></p>
+
+      <pre>
+Inicio:
+Pila [A] — procesado: A — orden: A
+
+Pop A -> push vecinos (B, D) en ese orden -> pila [B, D] (suponiendo push en ese orden; el tope es D)
+Pop B -> procesado: B -> push vecinos (A, C) -> A ya visitado, push C -> pila [C, D]
+Pop C -> procesado: C -> push vecinos (B, E) -> B visitado, push E -> pila [E, D]
+Pop E -> procesado: E -> push vecinos (C) -> C visitado -> pila [D]
+Pop D -> procesado: D -> vecinos (A) ya visitado -> pila []
+FIN
+
+Orden final DFS: A, B, C, E, D
+      </pre>
+
+      <p><strong>Nota:</strong> el orden exacto de DFS depende del orden en que iteres los vecinos (y si usas pila su LIFO cambia el orden). El ejemplo asume el orden de adyacencia mostrado arriba.</p>
+
+      <p><strong>Complejidad:</strong> O(V + E) en tiempo, O(V) en memoria para la recursión/pila.</p>
+    </section>
+
+    <section>
+      <h3>Usos típicos</h3>
+      <ul>
+        <li><strong>BFS:</strong> encontrar la <em>distancia mínima</em> en grafos no ponderados, búsqueda por capas, rutas más cortas en número de aristas.</li>
+        <li><strong>DFS:</strong> detección de ciclos, orden topológico (con pequeñas adaptaciones), componentes fuertemente conexas (con algoritmos derivados como Kosaraju/Tarjan).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h3>Ejemplos de código</h3>
+      <p>Python - BFS (con lista de adyacencia):</p>
+      <pre>
+from collections import deque
+
+def bfs(grafo, inicio):
+    visitado = set()
+    q = deque([inicio])
+    visitado.add(inicio)
+    orden = []
+    while q:
+        v = q.popleft()
+        orden.append(v)
+        for u in grafo[v]:
+            if u not in visitado:
+                visitado.add(u)
+                q.append(u)
+    return orden
+
+# ejemplo
+g = {"A":["B","D"], "B":["A","C"], "C":["B","E"], "D":["A"], "E":["C"]}
+print(bfs(g,"A"))  # ['A','B','D','C','E']
+      </pre>
+
+      <p>Python - DFS recursivo:</p>
+      <pre>
+def dfs(grafo, v, visitado=None, orden=None):
+    if visitado is None:
+        visitado = set()
+    if orden is None:
+        orden = []
+    visitado.add(v)
+    orden.append(v)
+    for u in grafo[v]:
+        if u not in visitado:
+            dfs(grafo, u, visitado, orden)
+    return orden
+
+print(dfs(g,"A"))  # ['A','B','C','E','D']
+      </pre>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Creado para la actividad de TADS — Ingeniería de Sistemas</p>
+      <p class="muted">Post 3: Recorridos BFS y DFS</p>
+    </div>
+  </footer>
+</body>
+</html>
